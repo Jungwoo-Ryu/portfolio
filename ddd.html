@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="initializeCalendar()"></button>
+</body>
+</html>
+<script>
+
+    function initializeCalendar() {
+    const calendarEl = document.getElementById('calendar');
+    if (calendarEl) {
+        fetch('/user/getCalendar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            // body: JSON.stringify({})
+        })
+            .then(response => response.json())
+            .then(events => {
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'timeGridWeek',
+                    slotMinTime: '09:00:00',
+                    slotMaxTime: '18:00:00',
+                    allDaySlot: false,
+                    buttonText: {
+                        today: "Today",
+                        month: "월별",
+                        week: "주별"
+                    },
+                    nowIndicator: true,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: '',
+                        right: 'dayGridMonth,timeGridWeek'
+                    },
+                    height: 545,
+                    aspectRatio: 1.35,
+                    locale: 'ko',
+                    timeZone: 'local',
+                    dayMaxEvents: true,
+                    weekends: false,
+                    events: events
+                });
+                calendar.render();
+            })
+            .catch(error => console.error('Error fetching events:', error));
+    } else {
+        console.error('Calendar element not found');
+    }
+}
+</script>
